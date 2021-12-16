@@ -1,13 +1,14 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { motion } from "framer-motion";
+import { motion, useDomEvent, useMotionValue, useTransform } from "framer-motion";
 
 
-const Wrapper = styled.div`
+const Wrapper = styled(motion.div)`
   height: 100vh;
   width: 100vw;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: space-around;
   align-items: center;
 `;
 
@@ -31,6 +32,30 @@ const BiggerBox = styled.div`
   border-radius: 40px;
 `;
 
+const SwitchBtn = styled(motion.button)`
+  width: 95px;
+  height: 40px;
+  border-radius: 5px;
+  border:0;
+  color:#ff9558;
+  font-size: 21px;
+  font-weight: 700;
+  background-color: white;
+`
+
+const btnVariants = {
+  start: {
+    width: 80,
+    height: 40,
+    fontSize: "18px",
+  },
+  end: {
+    width: 95,
+    height: 50,
+    fontSize: "21px",
+  }
+}
+
 const boxVariants = {
   hover: {scale: 1.4, rotateZ:90},
   click: {
@@ -40,14 +65,36 @@ const boxVariants = {
 
 };
 
+const test = {
+  start: {
+    translateX:-400,
+    rotate: 0,
+    transition: {
+      type:"spring",
+      duration: 1,
+    }
+  },
+  end: {
+    translateX:400,
+    rotate: 360,
+    transition: {
+      type:"spring",
+      duration: 1,
+    }
+  },
+}
 
 function App() {
-  const biggerBoxRef = useRef<HTMLDivElement>(null)
+  const [isClick, setIsClick] = useState(false);
+  const translateX = useMotionValue(0);
+  const color = useTransform(translateX, [-400, 400], ["rgba(255, 149, 88, 1)", "rgba(76, 81, 117, 1)"])
+
+
+
   return (
     <Wrapper>
-      <BiggerBox ref={biggerBoxRef}>
-        <Box drag dragSnapToOrigin dragElastic={0.5} dragConstraints={biggerBoxRef} variants={boxVariants} whileHover="hover" whileTap="click" />
-      </BiggerBox>
+        <Box variants={test} style={{translateX}} animate={isClick ? "start" : "end"}  drag="x" dragSnapToOrigin />
+        <SwitchBtn variants={btnVariants} style={{color}} animate={isClick ? "start" : "end"} onClick={() => setIsClick(isClick => !isClick)}>Switch</SwitchBtn>
     </Wrapper>
   );
 }
