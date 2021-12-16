@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { motion, useDomEvent, useMotionValue, useTransform } from "framer-motion";
+import { motion, useDomEvent, useMotionValue, useTransform, useViewportScroll } from "framer-motion";
+import SvgContainer from './SvgContainer';
 
 
 const Wrapper = styled(motion.div)`
@@ -45,13 +46,12 @@ const SwitchBtn = styled(motion.button)`
 
 const btnVariants = {
   start: {
-    width: 80,
-    height: 40,
+    width: "80px",
+    height: "32px",
     fontSize: "18px",
   },
   end: {
-    width: 95,
-    height: 50,
+    
     fontSize: "21px",
   }
 }
@@ -67,35 +67,44 @@ const boxVariants = {
 
 const test = {
   start: {
-    translateX:-400,
+    translateX:-380,
     rotate: 0,
-    transition: {
-      type:"spring",
-      duration: 1,
-    }
+    // transition: {
+    //   type:"spring",
+    //   duration: 1,
+    // }
   },
   end: {
-    translateX:400,
+    translateX:380,
     rotate: 360,
-    transition: {
-      type:"spring",
-      duration: 1,
-    }
+    // transition: {
+    //   type:"spring",
+    //   duration: 1,
+    // }
   },
 }
 
-function App() {
-  const [isClick, setIsClick] = useState(false);
-  const translateX = useMotionValue(0);
-  const color = useTransform(translateX, [-400, 400], ["rgba(255, 149, 88, 1)", "rgba(76, 81, 117, 1)"])
 
+function App() {
+
+  const [isClick, setIsClick] = useState(false);
+  const [showing, setShowing] = useState(false);
+  const toggleShowing = () => setShowing(prev => !prev)
+  
+  const translateX = useMotionValue(0);
+  const color = useTransform(translateX, [-350, 350], ["rgba(255, 149, 88, 1)", "rgba(76, 81, 117, 1)"])
 
 
   return (
-    <Wrapper>
-        <Box variants={test} style={{translateX}} animate={isClick ? "start" : "end"}  drag="x" dragSnapToOrigin />
-        <SwitchBtn variants={btnVariants} style={{color}} animate={isClick ? "start" : "end"} onClick={() => setIsClick(isClick => !isClick)}>Switch</SwitchBtn>
-    </Wrapper>
+    <>
+      <Wrapper>
+          <Box variants={test} style={{translateX}} animate={isClick ? "start" : "end"}  drag="x" dragSnapToOrigin />
+          <SwitchBtn variants={btnVariants} style={{color}} animate={isClick ? "start" : "end"} onClick={() => setIsClick(isClick => !isClick)}>Click!</SwitchBtn>
+        <SvgContainer/>
+          {showing ? <Box />: null}
+          <SwitchBtn onClick={toggleShowing}>Click!</SwitchBtn>
+      </Wrapper>
+    </>
   );
 }
 
